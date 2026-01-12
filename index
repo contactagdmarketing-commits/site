@@ -1,0 +1,709 @@
+<!doctype html>
+<html lang="fr">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>MJS Peinture — Peintre en bâtiment & Dégâts des eaux</title>
+  <meta name="description" content="Peintre en bâtiment : intérieur, extérieur, ravalement, rénovation. Intervention dégâts des eaux : diagnostic, assèchement, reprise supports, peinture. Devis gratuit." />
+  <meta name="theme-color" content="#0b1220" />
+
+  <style>
+    :root{
+      --bg:#0b1220;
+      --panel:#0f1b33;
+      --card:#101f3d;
+      --text:#eaf1ff;
+      --muted:#b8c7e6;
+      --line:rgba(255,255,255,.12);
+      --accent:#43e5b0;
+      --accent2:#5aa6ff;
+      --shadow: 0 18px 40px rgba(0,0,0,.35);
+      --radius:18px;
+      --max:1120px;
+      --font: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, "Apple Color Emoji","Segoe UI Emoji";
+    }
+
+    *{box-sizing:border-box}
+    html,body{height:100%}
+    body{
+      margin:0;
+      font-family:var(--font);
+      color:var(--text);
+      background:
+        radial-gradient(1200px 600px at 10% 10%, rgba(90,166,255,.18), transparent 55%),
+        radial-gradient(900px 500px at 90% 15%, rgba(67,229,176,.16), transparent 60%),
+        radial-gradient(700px 700px at 50% 100%, rgba(255,255,255,.06), transparent 55%),
+        var(--bg);
+      line-height:1.5;
+    }
+
+    a{color:inherit; text-decoration:none}
+    img{max-width:100%; display:block}
+    .container{max-width:var(--max); margin:0 auto; padding:0 18px}
+
+    /* Topbar */
+    .topbar{
+      position:sticky; top:0; z-index:50;
+      backdrop-filter: blur(10px);
+      background: rgba(11,18,32,.65);
+      border-bottom:1px solid var(--line);
+    }
+    .topbar .row{
+      display:flex; align-items:center; justify-content:space-between;
+      gap:12px; padding:12px 0;
+    }
+    .brand{
+      display:flex; align-items:center; gap:10px;
+      font-weight:800; letter-spacing:.2px;
+    }
+    .logo{
+      width:38px; height:38px; border-radius:12px;
+      background:
+        linear-gradient(135deg, rgba(67,229,176,.95), rgba(90,166,255,.95));
+      box-shadow: 0 10px 22px rgba(67,229,176,.15);
+      position:relative;
+      overflow:hidden;
+    }
+    .logo:after{
+      content:"";
+      position:absolute; inset:-20%;
+      background: linear-gradient(90deg, transparent, rgba(255,255,255,.22), transparent);
+      transform: rotate(25deg);
+      animation: shine 5.5s linear infinite;
+    }
+    @keyframes shine{
+      0%{transform:translateX(-60%) rotate(25deg)}
+      100%{transform:translateX(60%) rotate(25deg)}
+    }
+
+    nav{
+      display:flex; align-items:center; gap:16px;
+      font-weight:600; color:var(--muted);
+    }
+    nav a{padding:8px 10px; border-radius:12px}
+    nav a:hover{background:rgba(255,255,255,.06); color:var(--text)}
+    .actions{display:flex; gap:10px; align-items:center}
+
+    .btn{
+      display:inline-flex; align-items:center; justify-content:center; gap:10px;
+      padding:10px 14px;
+      border-radius:14px;
+      border:1px solid var(--line);
+      background: rgba(255,255,255,.06);
+      color:var(--text);
+      font-weight:700;
+      box-shadow:none;
+      transition: transform .12s ease, background .12s ease, border-color .12s ease;
+      cursor:pointer;
+    }
+    .btn:hover{background:rgba(255,255,255,.09); transform: translateY(-1px)}
+    .btn.primary{
+      border-color: rgba(67,229,176,.45);
+      background: linear-gradient(135deg, rgba(67,229,176,.25), rgba(90,166,255,.18));
+    }
+    .btn.primary:hover{border-color: rgba(67,229,176,.75)}
+    .pill{
+      display:inline-flex; align-items:center; gap:8px;
+      padding:8px 12px;
+      border-radius:999px;
+      border:1px solid var(--line);
+      background: rgba(255,255,255,.05);
+      color: var(--muted);
+      font-weight:650;
+    }
+    .dot{
+      width:8px; height:8px; border-radius:50%;
+      background: var(--accent);
+      box-shadow: 0 0 0 4px rgba(67,229,176,.18);
+    }
+
+    /* Hero */
+    .hero{
+      padding:56px 0 34px;
+    }
+    .hero-grid{
+      display:grid;
+      grid-template-columns: 1.2fr .8fr;
+      gap:18px;
+      align-items:stretch;
+    }
+    .hero h1{
+      margin:14px 0 10px;
+      font-size: clamp(28px, 3.8vw, 46px);
+      line-height:1.08;
+      letter-spacing:-.8px;
+    }
+    .hero p{
+      margin:0 0 18px;
+      color: var(--muted);
+      font-size: clamp(15px, 1.4vw, 18px);
+    }
+    .hero-cards{
+      display:grid;
+      gap:14px;
+      grid-template-columns: 1fr 1fr;
+    }
+    .card{
+      background: linear-gradient(180deg, rgba(16,31,61,.78), rgba(16,31,61,.55));
+      border:1px solid var(--line);
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
+      padding:16px;
+    }
+    .card h3{margin:0 0 6px; font-size:15px}
+    .card p{margin:0; color:var(--muted); font-size:14px}
+    .hero-right{
+      display:flex; flex-direction:column; gap:14px;
+    }
+    .quote{
+      padding:18px;
+      border-radius: var(--radius);
+      border:1px solid rgba(90,166,255,.3);
+      background: linear-gradient(180deg, rgba(90,166,255,.16), rgba(16,31,61,.55));
+      box-shadow: var(--shadow);
+    }
+    .quote .big{
+      font-size:18px;
+      margin:0 0 10px;
+      font-weight:800;
+    }
+    .checklist{display:grid; gap:8px; margin-top:12px}
+    .check{
+      display:flex; gap:10px; align-items:flex-start;
+      color:var(--muted);
+      font-weight:600;
+      font-size:14px;
+    }
+    .check svg{flex:0 0 auto; margin-top:2px}
+
+    /* Sections */
+    section{padding:36px 0}
+    .section-title{
+      display:flex; align-items:flex-end; justify-content:space-between; gap:14px;
+      margin-bottom:14px;
+    }
+    .section-title h2{
+      margin:0;
+      font-size: clamp(20px, 2.4vw, 30px);
+      letter-spacing:-.4px;
+    }
+    .section-title p{margin:0; color:var(--muted); max-width:64ch}
+
+    .grid-3{
+      display:grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap:14px;
+    }
+
+    .service{
+      padding:18px;
+      border-radius: var(--radius);
+      border:1px solid var(--line);
+      background: linear-gradient(180deg, rgba(16,31,61,.74), rgba(16,31,61,.5));
+      box-shadow: var(--shadow);
+    }
+    .service .icon{
+      width:44px; height:44px; border-radius:14px;
+      display:grid; place-items:center;
+      border:1px solid rgba(67,229,176,.35);
+      background: linear-gradient(135deg, rgba(67,229,176,.18), rgba(90,166,255,.10));
+      margin-bottom:10px;
+    }
+    .service h3{margin:0 0 8px; font-size:16px}
+    .service ul{margin:0; padding-left:18px; color:var(--muted)}
+    .service li{margin:6px 0}
+
+    /* Process */
+    .steps{
+      display:grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap:14px;
+    }
+    .step{
+      padding:16px;
+      border-radius: var(--radius);
+      border:1px solid var(--line);
+      background: rgba(255,255,255,.04);
+    }
+    .step .n{
+      width:34px; height:34px; border-radius:12px;
+      display:grid; place-items:center;
+      font-weight:900;
+      background: rgba(67,229,176,.12);
+      border:1px solid rgba(67,229,176,.35);
+      margin-bottom:10px;
+    }
+    .step h4{margin:0 0 6px}
+    .step p{margin:0; color:var(--muted); font-size:14px}
+
+    /* Gallery */
+    .gallery{
+      display:grid;
+      grid-template-columns: repeat(12, 1fr);
+      gap:12px;
+    }
+    .ph{
+      border-radius: var(--radius);
+      border:1px solid var(--line);
+      background:
+        radial-gradient(800px 250px at 30% 20%, rgba(90,166,255,.16), transparent 60%),
+        radial-gradient(700px 250px at 80% 70%, rgba(67,229,176,.14), transparent 60%),
+        rgba(255,255,255,.04);
+      min-height: 140px;
+      box-shadow: var(--shadow);
+      position:relative;
+      overflow:hidden;
+    }
+    .ph:after{
+      content:"Exemple photo";
+      position:absolute;
+      bottom:12px; left:12px;
+      font-weight:800;
+      color: rgba(234,241,255,.78);
+      background: rgba(11,18,32,.55);
+      border:1px solid var(--line);
+      padding:6px 10px;
+      border-radius: 999px;
+      font-size:12px;
+    }
+    .ph.big{grid-column: span 7; min-height: 260px}
+    .ph.mid{grid-column: span 5; min-height: 260px}
+    .ph.sm{grid-column: span 4; min-height: 180px}
+
+    /* CTA + form */
+    .cta{
+      display:grid;
+      grid-template-columns: 1fr 1fr;
+      gap:14px;
+      align-items:stretch;
+    }
+    form{
+      display:grid; gap:10px;
+    }
+    label{font-weight:750; font-size:13px; color: var(--muted)}
+    input, textarea, select{
+      width:100%;
+      border-radius: 14px;
+      border:1px solid var(--line);
+      background: rgba(255,255,255,.05);
+      color: var(--text);
+      padding:12px 12px;
+      outline:none;
+      font: inherit;
+    }
+    textarea{min-height:120px; resize: vertical}
+    input:focus, textarea:focus, select:focus{border-color: rgba(90,166,255,.55)}
+    .form-row{
+      display:grid;
+      grid-template-columns: 1fr 1fr;
+      gap:10px;
+    }
+    .fineprint{
+      color: var(--muted);
+      font-size: 12.5px;
+      margin:0;
+    }
+    .toast{
+      position: fixed;
+      left: 50%;
+      bottom: 20px;
+      transform: translateX(-50%);
+      background: rgba(11,18,32,.85);
+      border: 1px solid var(--line);
+      border-radius: 999px;
+      padding: 10px 14px;
+      box-shadow: var(--shadow);
+      display:none;
+      gap:10px;
+      align-items:center;
+      z-index:100;
+      color: var(--text);
+      font-weight:700;
+    }
+
+    /* Footer */
+    footer{
+      padding: 26px 0 40px;
+      border-top:1px solid var(--line);
+      color: var(--muted);
+    }
+    .foot{
+      display:flex; justify-content:space-between; gap:14px; flex-wrap:wrap;
+      align-items:center;
+    }
+    .foot small{opacity:.9}
+
+    /* Responsive */
+    @media (max-width: 980px){
+      .hero-grid{grid-template-columns: 1fr}
+      .steps{grid-template-columns: repeat(2,1fr)}
+      .grid-3{grid-template-columns: 1fr}
+      .cta{grid-template-columns: 1fr}
+    }
+    @media (max-width: 540px){
+      nav{display:none}
+      .hero-cards{grid-template-columns: 1fr}
+      .steps{grid-template-columns: 1fr}
+      .ph.big,.ph.mid,.ph.sm{grid-column: span 12}
+      .form-row{grid-template-columns: 1fr}
+    }
+  </style>
+</head>
+
+<body>
+  <header class="topbar">
+    <div class="container">
+      <div class="row">
+        <a class="brand" href="#top">
+          <div class="logo" aria-hidden="true"></div>
+          <div>
+            <div style="font-size:14px; opacity:.95;">MJS Peinture</div>
+            <div style="font-size:12px; color:var(--muted); font-weight:700;">Peintre en bâtiment • Dégâts des eaux</div>
+          </div>
+        </a>
+
+        <nav aria-label="Navigation">
+          <a href="#services">Services</a>
+          <a href="#degats">Dégâts des eaux</a>
+          <a href="#realisations">Réalisations</a>
+          <a href="#contact">Contact</a>
+        </nav>
+
+        <div class="actions">
+          <a class="btn" href="tel:+33600000000" aria-label="Appeler">
+            📞 Appeler
+          </a>
+          <a class="btn primary" href="#contact">
+            Devis gratuit
+          </a>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <main id="top" class="container">
+    <!-- HERO -->
+    <section class="hero">
+      <div class="hero-grid">
+        <div>
+          <span class="pill"><span class="dot" aria-hidden="true"></span> Intervention rapide • Travail propre • Finition nette</span>
+          <h1>Peinture & rénovation, avec un bonus : on sait gérer les dégâts des eaux sans paniquer.</h1>
+          <p>
+            Intérieur / extérieur, préparation des supports, finitions soignées.
+            Et quand l’eau a décidé de faire du street-art sur votre plafond : on diagnostique, on assèche, on reprend proprement, puis on repeint.
+          </p>
+
+          <div style="display:flex; gap:10px; flex-wrap:wrap; margin-bottom:16px;">
+            <a class="btn primary" href="#contact">📩 Demander un devis</a>
+            <a class="btn" href="#degats">💧 Urgence dégâts des eaux</a>
+            <button class="btn" id="copyPhone" type="button">📋 Copier le téléphone</button>
+          </div>
+
+          <div class="hero-cards">
+            <div class="card">
+              <h3>✅ Devis clair</h3>
+              <p>Pas de charabia. Des postes nets, des options, et un budget maîtrisé.</p>
+            </div>
+            <div class="card">
+              <h3>🧼 Chantier propre</h3>
+              <p>Protection, masquage, nettoyage : la peinture reste sur les murs, pas sur votre vie.</p>
+            </div>
+            <div class="card">
+              <h3>🎯 Finition pro</h3>
+              <p>Prépa des supports = résultat. On ne “cache” pas, on corrige.</p>
+            </div>
+            <div class="card">
+              <h3>💧 Dégâts des eaux</h3>
+              <p>Reprise plafonds/murs, anti-taches, traitement supports, peinture durable.</p>
+            </div>
+          </div>
+        </div>
+
+        <aside class="hero-right">
+          <div class="quote">
+            <p class="big">“Une belle peinture, c’est 60% de préparation… et 40% de savoir s’arrêter au bon moment.”</p>
+            <p style="margin:0; color:var(--muted); font-weight:650;">
+              Vous avez un projet ? Envoyez 2-3 photos + la surface approximative, on avance vite.
+            </p>
+            <div class="checklist">
+              <div class="check">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+                  <path d="M20 6L9 17l-5-5" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                </svg>
+                Déplacement & conseils selon zone
+              </div>
+              <div class="check">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+                  <path d="M20 6L9 17l-5-5" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                </svg>
+                Peintures pro (lavables, mat/velours/satin)
+              </div>
+              <div class="check">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+                  <path d="M20 6L9 17l-5-5" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                </svg>
+                Reprise après infiltration / sinistre
+              </div>
+            </div>
+          </div>
+
+          <div class="card">
+            <h3 style="margin:0 0 8px;">Infos pratiques</h3>
+            <p style="margin:0; color:var(--muted);">
+              <strong style="color:var(--text);">Zone :</strong> à personnaliser (ex : Toulouse & alentours)<br/>
+              <strong style="color:var(--text);">Horaires :</strong> Lun–Sam, 8h–19h<br/>
+              <strong style="color:var(--text);">Téléphone :</strong> <span id="phoneTxt">06 00 00 00 00</span><br/>
+              <strong style="color:var(--text);">Email :</strong> contact@mjs-peinture.fr
+            </p>
+          </div>
+        </aside>
+      </div>
+    </section>
+
+    <!-- SERVICES -->
+    <section id="services">
+      <div class="section-title">
+        <div>
+          <h2>Services</h2>
+          <p>Du propre, du durable, du “ça claque” sans effet TikTok. Juste du travail pro.</p>
+        </div>
+      </div>
+
+      <div class="grid-3">
+        <div class="service">
+          <div class="icon" aria-hidden="true">🎨</div>
+          <h3>Peinture intérieure</h3>
+          <ul>
+            <li>Murs / plafonds / boiseries</li>
+            <li>Préparation : enduits, ponçage, impression</li>
+            <li>Finitions : mat, velours, satin, laques</li>
+          </ul>
+        </div>
+
+        <div class="service">
+          <div class="icon" aria-hidden="true">🏠</div>
+          <h3>Extérieur & ravalement</h3>
+          <ul>
+            <li>Façades (selon support et état)</li>
+            <li>Sous-faces, volets, portails</li>
+            <li>Protection, tenue UV/intempéries</li>
+          </ul>
+        </div>
+
+        <div class="service">
+          <div class="icon" aria-hidden="true">🧱</div>
+          <h3>Rénovation supports</h3>
+          <ul>
+            <li>Reprise fissures & défauts</li>
+            <li>Traitements anti-humidité (selon cas)</li>
+            <li>Mise à niveau avant peinture</li>
+          </ul>
+        </div>
+      </div>
+    </section>
+
+    <!-- DEGATS DES EAUX -->
+    <section id="degats">
+      <div class="section-title">
+        <div>
+          <h2>Dégâts des eaux</h2>
+          <p>La mission : remettre le mur à zéro, pas juste “mettre du blanc par-dessus” (sinon la tache revient dire bonjour).</p>
+        </div>
+        <a class="btn primary" href="#contact">💧 Demande d’intervention</a>
+      </div>
+
+      <div class="steps">
+        <div class="step">
+          <div class="n">1</div>
+          <h4>Diagnostic</h4>
+          <p>Origine, zones touchées, état des supports. On évite les mauvaises surprises.</p>
+        </div>
+        <div class="step">
+          <div class="n">2</div>
+          <h4>Assèchement & sécurisation</h4>
+          <p>Temps de séchage, ventilation/assèchement si nécessaire. Pas de peinture sur support humide.</p>
+        </div>
+        <div class="step">
+          <div class="n">3</div>
+          <h4>Reprise supports</h4>
+          <p>Grattage, traitement anti-taches, enduits, ponçage. On repart sur une base saine.</p>
+        </div>
+        <div class="step">
+          <div class="n">4</div>
+          <h4>Peinture & finition</h4>
+          <p>Impression adaptée + 2 couches. Résultat net, durable, homogène.</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- REALISATIONS -->
+    <section id="realisations">
+      <div class="section-title">
+        <div>
+          <h2>Réalisations</h2>
+          <p>Remplacez ces blocs par vos vraies photos (avant/après, plafonds après infiltration, rénovations complètes…)</p>
+        </div>
+      </div>
+
+      <div class="gallery" aria-label="Galerie">
+        <div class="ph big" role="img" aria-label="Photo réalisation 1 (exemple)"></div>
+        <div class="ph mid" role="img" aria-label="Photo réalisation 2 (exemple)"></div>
+        <div class="ph sm" role="img" aria-label="Photo réalisation 3 (exemple)"></div>
+        <div class="ph sm" role="img" aria-label="Photo réalisation 4 (exemple)"></div>
+        <div class="ph sm" role="img" aria-label="Photo réalisation 5 (exemple)"></div>
+      </div>
+    </section>
+
+    <!-- CONTACT -->
+    <section id="contact">
+      <div class="section-title">
+        <div>
+          <h2>Contact & devis</h2>
+          <p>Décrivez le projet, ajoutez la surface approximative et, si possible, 2–3 photos. On répond vite.</p>
+        </div>
+      </div>
+
+      <div class="cta">
+        <div class="card">
+          <h3 style="margin:0 0 8px;">Coordonnées</h3>
+          <p style="margin:0; color:var(--muted); font-weight:650;">
+            📞 <strong style="color:var(--text);">06 00 00 00 00</strong><br/>
+            ✉️ contact@mjs-peinture.fr<br/>
+            📍 Zone : à personnaliser<br/><br/>
+            <span class="pill"><span class="dot" aria-hidden="true"></span> Devis gratuit • Réponse rapide</span>
+          </p>
+
+          <div style="margin-top:14px; display:flex; gap:10px; flex-wrap:wrap;">
+            <a class="btn primary" href="tel:+33600000000">📞 Appeler maintenant</a>
+            <a class="btn" href="mailto:contact@mjs-peinture.fr?subject=Demande%20de%20devis%20—%20MJS%20Peinture&body=Bonjour%2C%0D%0A%0D%0AJe%20souhaite%20un%20devis%20pour%20%3A%0D%0A-%20Type%20de%20travaux%20(intrieur%2Fextrieur%2Fd%C3%A9g%C3%A2t%20des%20eaux)%20%3A%0D%0A-%20Pi%C3%A8ces%2Fsurfaces%20approximatives%20%3A%0D%0A-%20Ville%20%3A%0D%0A-%20D%C3%A9lai%20souhait%C3%A9%20%3A%0D%0A%0D%0AMerci%2C">✉️ Envoyer un email</a>
+          </div>
+
+          <p class="fineprint" style="margin-top:14px;">
+            Astuce terrain : pour les dégâts des eaux, une photo + “depuis quand” + “source réparée ou non” = devis plus rapide.
+          </p>
+        </div>
+
+        <div class="card">
+          <h3 style="margin:0 0 10px;">Formulaire (envoi par email)</h3>
+          <form id="contactForm">
+            <div class="form-row">
+              <div>
+                <label for="name">Nom</label>
+                <input id="name" name="name" placeholder="Votre nom" required />
+              </div>
+              <div>
+                <label for="phone">Téléphone</label>
+                <input id="phone" name="phone" placeholder="06…" inputmode="tel" />
+              </div>
+            </div>
+
+            <div class="form-row">
+              <div>
+                <label for="city">Ville</label>
+                <input id="city" name="city" placeholder="Ex : Toulouse" />
+              </div>
+              <div>
+                <label for="type">Type de demande</label>
+                <select id="type" name="type">
+                  <option>Peinture intérieure</option>
+                  <option>Peinture extérieure / façade</option>
+                  <option>Rénovation / supports</option>
+                  <option>Dégâts des eaux</option>
+                </select>
+              </div>
+            </div>
+
+            <div>
+              <label for="details">Détails</label>
+              <textarea id="details" name="details" placeholder="Surface, pièces, état, délai, dégâts des eaux (date, zone, source réparée ?)"></textarea>
+            </div>
+
+            <button class="btn primary" type="submit">📩 Envoyer la demande</button>
+            <p class="fineprint">Ce formulaire ouvre votre logiciel mail (pas de base de données cachée, ici on bosse la peinture, pas l’espionnage).</p>
+          </form>
+        </div>
+      </div>
+    </section>
+
+    <div class="toast" id="toast" role="status" aria-live="polite">
+      ✅ Copié
+    </div>
+  </main>
+
+  <footer>
+    <div class="container">
+      <div class="foot">
+        <div style="display:flex; align-items:center; gap:10px;">
+          <div class="logo" aria-hidden="true" style="width:30px;height:30px;border-radius:10px;"></div>
+          <div>
+            <div style="font-weight:900; color:var(--text);">MJS Peinture</div>
+            <small>Peintre en bâtiment • Dégâts des eaux • Devis gratuit</small>
+          </div>
+        </div>
+
+        <small>© <span id="year"></span> MJS Peinture • Mentions légales (à ajouter) • SIRET (à ajouter)</small>
+      </div>
+    </div>
+  </footer>
+
+  <script>
+    // --- Quick config ---
+    const COMPANY = {
+      name: "MJS Peinture",
+      phoneDisplay: "06 00 00 00 00",
+      phoneTel: "+33600000000",
+      email: "contact@mjs-peinture.fr",
+    };
+
+    // Update year
+    document.getElementById("year").textContent = new Date().getFullYear();
+
+    // Copy phone
+    const toast = document.getElementById("toast");
+    const showToast = (msg="✅ Copié") => {
+      toast.textContent = msg;
+      toast.style.display = "inline-flex";
+      clearTimeout(window.__toastTimer);
+      window.__toastTimer = setTimeout(()=> toast.style.display="none", 1800);
+    };
+
+    document.getElementById("copyPhone").addEventListener("click", async () => {
+      try{
+        await navigator.clipboard.writeText(COMPANY.phoneDisplay);
+        showToast("✅ Téléphone copié");
+      }catch(e){
+        showToast("⚠️ Copie impossible");
+      }
+    });
+
+    // Contact form -> mailto
+    document.getElementById("contactForm").addEventListener("submit", (e) => {
+      e.preventDefault();
+
+      const name = document.getElementById("name").value.trim();
+      const phone = document.getElementById("phone").value.trim();
+      const city = document.getElementById("city").value.trim();
+      const type = document.getElementById("type").value;
+      const details = document.getElementById("details").value.trim();
+
+      const subject = encodeURIComponent(`Demande de devis — ${type}`);
+      const body = encodeURIComponent(
+`Bonjour ${COMPANY.name},
+
+Nom : ${name}
+Téléphone : ${phone || "—"}
+Ville : ${city || "—"}
+Type : ${type}
+
+Détails :
+${details || "—"}
+
+Merci,`
+      );
+
+      window.location.href = `mailto:${COMPANY.email}?subject=${subject}&body=${body}`;
+      showToast("📩 Ouverture de votre email…");
+    });
+  </script>
+</body>
+</html>
